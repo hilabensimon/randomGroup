@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>מגריל סדר קבוצות</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-top: 40px;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+
+        .input-group input {
+            flex: 1;
+            padding: 8px;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .input-group button {
+            padding: 8px 12px;
+            font-size: 1rem;
+            background-color: #007acc;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .input-group button:hover {
+            background-color: #005fa3;
+        }
+
+        .teams-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 16px 0;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .teams-list li {
+            padding: 8px 12px;
+            border-bottom: 1px solid #eee;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        .teams-list li:last-child {
+            border-bottom: none;
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+        }
+
+        .actions button {
+            padding: 10px 16px;
+            font-size: 1rem;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .actions button:hover {
+            background-color: #1e7e34;
+        }
+
+        .actions .clear-btn {
+            background-color: #dc3545;
+        }
+
+        .actions .clear-btn:hover {
+            background-color: #a71d2a;
+        }
+
+        .shuffled-output {
+            margin-top: 16px;
+        }
+
+        .shuffled-output ul {
+            list-style: disc;
+            padding-right: 20px;
+            color: #555;
+        }
+
+        .shuffled-output li {
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>מגריל סדר קבוצות</h1>
+
+        <div class="input-group">
+            <input type="text" id="team-input" placeholder="הכנס שם קבוצה" />
+            <button id="add-button">הוסף קבוצה</button>
+        </div>
+
+        <ul class="teams-list" id="teams-list"></ul>
+
+        <div class="actions">
+            <button id="shuffle-button">ערבב והצג סדר</button>
+            <button class="clear-btn" id="clear-button">נקה רשימה</button>
+        </div>
+
+        <div class="shuffled-output" id="shuffled-output"></div>
+    </div>
+
+    <script>
+        const teamInput = document.getElementById('team-input');
+        const addButton = document.getElementById('add-button');
+        const teamsList = document.getElementById('teams-list');
+        const shuffleButton = document.getElementById('shuffle-button');
+        const clearButton = document.getElementById('clear-button');
+        const shuffledOutput = document.getElementById('shuffled-output');
+
+        let teams = [];
+
+        addButton.addEventListener('click', () => {
+            const name = teamInput.value.trim();
+            if (name === '') return;
+            teams.push(name);
+            renderTeams();
+            teamInput.value = '';
+            teamInput.focus();
+            shuffledOutput.innerHTML = '';
+        });
+
+        teamInput.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') {
+                addButton.click();
+            }
+        });
+
+        function renderTeams() {
+            teamsList.innerHTML = '';
+            teams.forEach((team) => {
+                const li = document.createElement('li');
+                li.textContent = team;
+                teamsList.appendChild(li);
+            });
+        }
+
+        shuffleButton.addEventListener('click', () => {
+            if (teams.length === 0) {
+                shuffledOutput.innerHTML = 'אין קבוצות לערבב.';
+                return;
+            }
+            const shuffled = shuffleArray([...teams]);
+            const ul = document.createElement('ul');
+            shuffled.forEach((team) => {
+                const li = document.createElement('li');
+                li.textContent = team;
+                ul.appendChild(li);
+            });
+            shuffledOutput.innerHTML = '';
+            shuffledOutput.appendChild(ul);
+        });
+
+        clearButton.addEventListener('click', () => {
+            teams = [];
+            renderTeams();
+            shuffledOutput.innerHTML = '';
+        });
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+    </script>
+</body>
+</html>
